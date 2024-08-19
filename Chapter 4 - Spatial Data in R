@@ -1,0 +1,61 @@
+library(raster)
+install.packages("RStoolbox")
+library(RS)
+
+setwd("/home/alessio/Documenti/Courses/Monitoring Ecosystem Changes and Functioning/lab_Monitoring/EN")
+
+NO2 <- raster("EN_0001.png")
+
+NO2 <- brick("EN_0001.png")
+
+all_years_and_bands <- list.files(pattern = "EN")
+
+all_years <- stack(all_years_and_bands)
+
+# clean names
+names(all_years) <- gsub(pattern = "000", replace = "", x = names(all_years))
+
+# export the created raster stack
+writeRaster(all_years, filename = "all.years.tif")
+
+# import the created raster stack
+all_years <- brick(all_years)
+
+# convert the brick into a SpatialPixelsDataFrame file (differently from brick and stack, it gets loaded into memory)
+all_years <- as(all_years, "SpatialPixelsDataFrame")
+class(all_years)
+
+# writing an additional ENVI header file so that we can open our RasterBrick in any GIS
+hdr(all_years, format = "ENVI")
+
+# setting a global option for having a ENVI header file any time a .grd file is created
+rasterOptions(addheader = "ENVI")
+
+
+# PLOTTING SPATIAL DATA IN R
+
+# PLot all bands separately
+plot(all_years)
+
+# Plot only the fifth layer
+plot(all_years, 5)
+
+# Change the color palette
+plot(all_years, 5, col = grey.colors(100))
+
+# Set layer transparency to 50%
+plot(all_years, 5, alpha = 0.5)
+
+# Alternative function (less flexible than plot and no legend)
+image(all_years, 5)
+
+
+# For the lattice plotting system
+spplot(all_years, 1:4)
+
+# For ggplot version
+plotRGB(all_years, 5)
+ggR(all_years, 5)
+
+# with legend
+ggR
