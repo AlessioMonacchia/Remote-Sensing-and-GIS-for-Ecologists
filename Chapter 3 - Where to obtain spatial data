@@ -1,0 +1,17 @@
+install.packages("geodata")
+library(raster)
+library(geodata)
+
+# Let's get the Brazil shape from the Global Administrative database (GADM)
+brazil <- gadm("Brazil", level=1,"Geodata", version="latest", resolution=1)
+
+plot(brazil)
+
+# Let's get precipitation data from WorldClim database
+prec <- worldclim_global(var = "prec", res = 2.5, path = "Geodata", version="2.1")
+names(prec) <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+plot(prec)
+plot(prec$Jan)
+
+worldclim_country(country = "Brazil", var = "prec", path = "Geodata", version="2.1")
